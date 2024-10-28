@@ -167,7 +167,7 @@ public class Sqrt : UnaryOperation
         return Math.Sqrt(operandValue);
     }
 
-    public override string ToString() => $"sqrt({Operand})";
+    public override string ToString() => $"Sqrt({Operand})";
 }
 public abstract class Function:Expr
 {
@@ -180,6 +180,7 @@ public abstract class Function:Expr
     public static Expr Sin(Expr operand) => new Sin(operand);
     public static Expr Cos(Expr operand) => new Cos(operand);
     public static Expr Tan(Expr operand) => new Tan(operand);
+    public static Expr Ctg(Expr operand) => new Ctg(operand);
 
 }
 public class Sin : Function
@@ -189,7 +190,7 @@ public class Sin : Function
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) =>
         Math.Sin((Val.Compute(variableValues)));
 
-    public override string ToString() => $"sin({Val})";
+    public override string ToString() => $"Sin({Val})";
 }
 
 public class Cos : Function
@@ -199,7 +200,7 @@ public class Cos : Function
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) =>
         Math.Cos((Val.Compute(variableValues)));
 
-    public override string ToString() => $"cos({Val})";
+    public override string ToString() => $"Cos({Val})";
 }
 
 public class Tan : Function
@@ -209,7 +210,16 @@ public class Tan : Function
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) =>
         Math.Tan((Val.Compute(variableValues)));
 
-    public override string ToString() => $"tan({Val})";
+    public override string ToString() => $"Tan({Val})";
+}
+public class Ctg : Function
+{
+    public Ctg(Expr operand) : base(operand) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues) =>
+        1 / Math.Tan((Val.Compute(variableValues)));
+
+    public override string ToString() => $"Ctg({Val})";
 }
 
 class Program{
@@ -238,9 +248,9 @@ class Program{
         {expr2.Compute(new Dictionary<string, double> { { "x", 1 }, { "y", 2 } })}
         """);
         var z = new Variable("z");
-        var expr3 =  Tan(Cos(z));
+        var expr3 =  Ctg(z);
         Console.WriteLine($"{expr3.ToString()}");  
-        Console.WriteLine($" {expr3.Compute(new Dictionary<string, double> { { "z", 60 }})}");
+        Console.WriteLine($" {expr3.Compute(new Dictionary<string, double> { { "z", 0.523599 }})}");
         
     }
 
