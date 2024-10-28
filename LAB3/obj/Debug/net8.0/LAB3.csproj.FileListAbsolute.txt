@@ -12,3 +12,18 @@ c:\Study\5 sem\C#\C#_LAB3\LAB3\obj\Debug\net8.0\refint\LAB3.dll
 c:\Study\5 sem\C#\C#_LAB3\LAB3\obj\Debug\net8.0\LAB3.pdb
 c:\Study\5 sem\C#\C#_LAB3\LAB3\obj\Debug\net8.0\LAB3.genruntimeconfig.cache
 c:\Study\5 sem\C#\C#_LAB3\LAB3\obj\Debug\net8.0\ref\LAB3.dll
+c:\5_semestr\С#\C-_LAB3\LAB3\bin\Debug\net8.0\LAB3.exe
+c:\5_semestr\С#\C-_LAB3\LAB3\bin\Debug\net8.0\LAB3.deps.json
+c:\5_semestr\С#\C-_LAB3\LAB3\bin\Debug\net8.0\LAB3.runtimeconfig.json
+c:\5_semestr\С#\C-_LAB3\LAB3\bin\Debug\net8.0\LAB3.dll
+c:\5_semestr\С#\C-_LAB3\LAB3\bin\Debug\net8.0\LAB3.pdb
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.GeneratedMSBuildEditorConfig.editorconfig
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.AssemblyInfoInputs.cache
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.AssemblyInfo.cs
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.csproj.CoreCompileInputs.cache
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.sourcelink.json
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.dll
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\refint\LAB3.dll
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.pdb
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\LAB3.genruntimeconfig.cache
+c:\5_semestr\С#\C-_LAB3\LAB3\obj\Debug\net8.0\ref\LAB3.dll

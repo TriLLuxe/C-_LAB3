@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Expr;
@@ -187,7 +187,7 @@ public class Sin : Function
     public Sin(Expr operand) : base(operand) { }
 
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) =>
-        Math.Sin((Val.Compute(variableValues)));
+        Math.Sin((Val.Compute(variableValues))*Math.PI/180);
 
     public override string ToString() => $"sin({Val})";
 }
@@ -197,7 +197,7 @@ public class Cos : Function
     public Cos(Expr operand) : base(operand) { }
 
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) =>
-        Math.Cos((Val.Compute(variableValues)));
+        Math.Cos((Val.Compute(variableValues))*Math.PI/180);
 
     public override string ToString() => $"cos({Val})";
 }
