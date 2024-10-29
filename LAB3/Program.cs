@@ -248,7 +248,7 @@ class Program{
         {expr2.Compute(new Dictionary<string, double> { { "x", 1 }, { "y", 2 } })}
         """);
         var z = new Variable("z");
-        var expr3 =  Ctg(z);
+        var expr3 =  Tan(Cos(z));
         Console.WriteLine($"{expr3.ToString()}");  
         Console.WriteLine($" {expr3.Compute(new Dictionary<string, double> { { "z", 0.523599 }})}");
         
