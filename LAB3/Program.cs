@@ -21,7 +21,7 @@ public abstract class Expr : IExpr
     public abstract int PolynomialDegree { get; }
     public abstract double Compute(IReadOnlyDictionary<string, double> variableValues = null);
 
-    public static implicit operator Expr(int arg) => new Constant(arg);
+    public static implicit operator Expr(int arg) => new Constant(arg);//тут надо Expr сделать от double
     public static Expr Sqrt(Expr operand) => new Sqrt(operand);
 
 
@@ -56,12 +56,12 @@ public class Variable : Expr
 
     public Variable(string name) => Name = name;
 
-    public override IEnumerable<string> Variables => new[] { Name };
+    public override IEnumerable<string> Variables => new[] { Name };//так не надо, лучше через yield return, либо один раз надо сохранить, тк тут при изменениии созданется копия
     public override bool IsConstant => false;
     public override bool IsPolynomial => true;
     public override int PolynomialDegree => 1;
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) =>
-        variableValues.ContainsKey(Name) ? variableValues[Name] : throw new ArgumentException($"Variable {Name} is not defined.");
+        variableValues.ContainsKey(Name) ? variableValues[Name] : throw new ArgumentException($"Variable {Name} is not defined.");//лучше try get dictinory тк тут два раза поиск, можно за 1 действие, можно взять просто второе через try catch...
     public override string ToString() => Name;
 }
 
@@ -73,8 +73,8 @@ public abstract class UnaryOperation : Expr
 
     public override IEnumerable<string> Variables => Operand.Variables;
     public override bool IsConstant => Operand.IsConstant;
-    public override bool IsPolynomial => false;
-    public override int PolynomialDegree => 0;
+    public override bool IsPolynomial => false;//тут если знак поменять он останестя полиномом
+    public override int PolynomialDegree => 0;//соответсвтенно тут тоже
 }
 
 public class UnaryPlus : UnaryOperation
@@ -105,9 +105,9 @@ public abstract class BinaryOperation : Expr
     }
 
     public override IEnumerable<string> Variables => A.Variables.Union(B.Variables);
-    public override bool IsConstant => A.IsConstant && B.IsConstant;
-    public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial;
-    public override int PolynomialDegree => Math.Max(A.PolynomialDegree, B.PolynomialDegree);
+    public override bool IsConstant => A.IsConstant && B.IsConstant;//тут неверно (тут больше случаев)
+    public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial;//тут неверно (хотя хз)
+    public override int PolynomialDegree => Math.Max(A.PolynomialDegree, B.PolynomialDegree);//тут неверно (хотя хз)
 }
 
 public class BinaryAddition : BinaryOperation
@@ -135,7 +135,7 @@ public class Multiplication : BinaryOperation
     public override string ToString() => $"({A} * {B})";
 }
 
-public class Division : BinaryOperation
+public class Division : BinaryOperation// в делении не переопределеана степень (PolynomialDegree), тк максимум из 2 но для деления это не так
 {
     public Division(Expr a, Expr b) : base(a, b) { }
 
@@ -150,7 +150,7 @@ public class Division : BinaryOperation
     public override string ToString() => $"({A} / {B})";
 }
 
-public class Sqrt : UnaryOperation
+public class Sqrt : UnaryOperation// тут ближе Function
 {
     public Sqrt(Expr operand) : base(operand) { }
 
@@ -174,9 +174,9 @@ public abstract class Function:Expr
     public Expr Val{ get; }
     public Function(Expr val) => Val = val;
     public override IEnumerable<string> Variables => Val.Variables;
-    public override bool IsConstant => Val.IsConstant;
-    public override bool IsPolynomial => Val.IsPolynomial;
-    public override int PolynomialDegree => Val.PolynomialDegree;
+    public override bool IsConstant => Val.IsConstant;//тут надо переделать
+    public override bool IsPolynomial => Val.IsPolynomial;//тут тоже
+    public override int PolynomialDegree => Val.PolynomialDegree;//и тут посмотреть 
     public static Expr Sin(Expr operand) => new Sin(operand);
     public static Expr Cos(Expr operand) => new Cos(operand);
     public static Expr Tan(Expr operand) => new Tan(operand);
@@ -248,9 +248,11 @@ class Program{
         {expr2.Compute(new Dictionary<string, double> { { "x", 1 }, { "y", 2 } })}
         """);
         var z = new Variable("z");
-        var expr3 =  Tan(Cos(z));
+        var expr3 =  Cos(z);
         Console.WriteLine($"{expr3.ToString()}");  
+
         Console.WriteLine($" {expr3.Compute(new Dictionary<string, double> { { "z", 0.523599 }})}");
+
         
     }
 
