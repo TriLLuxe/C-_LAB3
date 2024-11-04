@@ -322,9 +322,9 @@ class Program
        
         Console.WriteLine($"""
         {expr1.ToString()} // Ожидается: 0
-        {expr1.IsConstant}
-        {expr1.IsPolynomial}
-        {expr1.PolynomialDegree}
+        {expr1.IsConstant} // Ожидается: true
+        {expr1.IsPolynomial}// Ожидается: true
+        {expr1.PolynomialDegree} // Ожидается: 0
         {expr2.ToString()} // Ожидается: x
         {expr4.ToString()} // Ожидается: x
         {expr5.ToString()} // Ожидается: x
@@ -332,9 +332,9 @@ class Program
         {expr7.ToString()} // Ожидается: 0
         {expr8.ToString()} // Ожидается: 1
         {expr10.ToString()} // Ожидается: Sin(x)
-        {expr10.IsConstant}
-        {expr10.IsPolynomial}
-        {expr10.PolynomialDegree}
+        {expr10.IsConstant}// Ожидается: false
+        {expr10.IsPolynomial}// Ожидается: false
+        {expr10.PolynomialDegree} // Ожидается: 0
         
         """);
     }
