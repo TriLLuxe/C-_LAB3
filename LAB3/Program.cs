@@ -379,8 +379,8 @@ class Program{
         var x = new Variable("x");
         var y = new Variable("y");
         var c = new Constant(3);
-        var expr2 = x/x;
-        var expr3 =(5 - 3*c) * Sqrt(16 + c*c);
+        var expr3 = (2*x*x-4)/(x*x-2);
+        var expr2 =(5 - 3*c) * Sqrt(16 + c*c);
        Console.WriteLine($"""
         {expr3.ToString()}
         [{string.Join(", ", expr3.Variables)}]
