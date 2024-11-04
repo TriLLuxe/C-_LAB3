@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Expr;
-using static Function;
 
 public interface IExpr
 {
@@ -80,6 +78,7 @@ public abstract class UnaryOperation : Expr
     public override bool IsConstant => Operand.IsConstant;
     public override bool IsPolynomial => Operand.IsPolynomial;
     public override int PolynomialDegree => Operand.PolynomialDegree;
+    public override Expr Simplify() => new UnaryPlus(Operand.Simplify());
 }
 
 public class UnaryPlus : UnaryOperation
@@ -110,7 +109,8 @@ public abstract class BinaryOperation : Expr
         A = a;
         B = b;
     }
-public override IEnumerable<string> Variables => A.Variables.Union(B.Variables).Distinct();
+
+    public override IEnumerable<string> Variables => A.Variables.Union(B.Variables).Distinct();
     public override bool IsConstant => A.IsConstant && B.IsConstant;
     public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial && !(this is Division && !B.IsConstant);
     public override int PolynomialDegree
@@ -140,12 +140,12 @@ public class BinaryAddition : BinaryOperation
         Expr simplifiedLeft = A.Simplify();
         Expr simplifiedRight = B.Simplify();
 
-        if (simplifiedLeft is Constant leftConst && simplifiedRight is Constant rightConst)
-            return new Constant(leftConst.Value + rightConst.Value);
+        if (simplifiedLeft is Constant constantLeft1 && simplifiedRight is Constant constantRight1)
+            return new Constant(constantLeft1.Value + constantRight1.Value);
 
-        if (simplifiedLeft is Constant leftConst && leftConst.Value == 0)
+        if (simplifiedLeft is Constant constantLeft2 && constantLeft2.Value == 0)
             return simplifiedRight;
-        if (simplifiedRight is Constant rightConst && rightConst.Value == 0)
+        if (simplifiedRight is Constant constantRight2 && constantRight2.Value == 0)
             return simplifiedLeft;
 
         return new BinaryAddition(simplifiedLeft, simplifiedRight);
@@ -164,8 +164,8 @@ public class BinarySubtraction : BinaryOperation
         Expr simplifiedLeft = A.Simplify();
         Expr simplifiedRight = B.Simplify();
 
-        if (simplifiedLeft is Constant leftConst && simplifiedRight is Constant rightConst)
-            return new Constant(leftConst.Value - rightConst.Value);
+        if (simplifiedLeft is Constant constantLeft1 && simplifiedRight is Constant constantRight1)
+            return new Constant(constantLeft1.Value - constantRight1.Value);
 
         if (simplifiedLeft.Equals(simplifiedRight))
             return new Constant(0);
@@ -186,14 +186,14 @@ public class Multiplication : BinaryOperation
         Expr simplifiedLeft = A.Simplify();
         Expr simplifiedRight = B.Simplify();
 
-        if (simplifiedLeft is Constant leftConst && simplifiedRight is Constant rightConst)
-            return new Constant(leftConst.Value * rightConst.Value);
+        if (simplifiedLeft is Constant constantLeft1 && simplifiedRight is Constant constantRight1)
+            return new Constant(constantLeft1.Value * constantRight1.Value);
 
-        if (simplifiedLeft is Constant leftConst && leftConst.Value == 0 || simplifiedRight is Constant rightConst && rightConst.Value == 0)
+        if (simplifiedLeft is Constant constantLeft2 && constantLeft2.Value == 0 || simplifiedRight is Constant constantRight2 && constantRight2.Value == 0)
             return new Constant(0);
-        if (simplifiedLeft is Constant leftConst && leftConst.Value == 1)
+        if (simplifiedLeft is Constant constantLeft3 && constantLeft3.Value == 1)
             return simplifiedRight;
-        if (simplifiedRight is Constant rightConst && rightConst.Value == 1)
+        if (simplifiedRight is Constant constantRight3 && constantRight3.Value == 1)
             return simplifiedLeft;
 
         return new Multiplication(simplifiedLeft, simplifiedRight);
@@ -212,9 +212,10 @@ public class Division : BinaryOperation
         Expr simplifiedLeft = A.Simplify();
         Expr simplifiedRight = B.Simplify();
 
-        if (simplifiedLeft is Constant leftConst && simplifiedRight is Constant rightConst)
-            return new Constant(leftConst.Value / rightConst.Value);
-if (simplifiedRight is Constant rightConst && rightConst.Value == 1)
+        if (simplifiedLeft is Constant constantLeft1 && simplifiedRight is Constant constantRight1)
+            return new Constant(constantLeft1.Value / constantRight1.Value);
+
+        if (simplifiedRight is Constant constantRight2 && constantRight2.Value == 1)
             return simplifiedLeft;
 
         return new Division(simplifiedLeft, simplifiedRight);
@@ -228,6 +229,7 @@ if (simplifiedRight is Constant rightConst && rightConst.Value == 1)
     }
     public override string ToString() => $"({A} / {B})";
 }
+
 public class Sqrt : Function
 {
     public Sqrt(Expr operand) : base(operand) { }
