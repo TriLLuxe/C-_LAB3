@@ -130,9 +130,6 @@ public class Constant : Expr
     public override int PolynomialDegree => 0;
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) => Value;
     public override string ToString() => Value.ToString();
-
-    
-    
 }
 
 public class Variable : Expr
@@ -157,14 +154,123 @@ public class Variable : Expr
     public override string ToString() => Name;
 
     public override bool Equals(object obj) => obj is Variable variable && Name == variable.Name;
-    public override int GetHashCode() => Name.GetHashCode();
 }
 
-// Существующие классы UnaryOperation, BinaryOperation, Function и другие остаются без изменений.
-// Изменения в основном сосредоточены на добавлении логики Simplifier и модификации перегрузок бинарных операторов.
+public abstract class UnaryOperation : Expr
+{
+    public Expr Operand { get; }
 
-class Program{
-    static void Main(string[] args){
+    public UnaryOperation(Expr operand) => Operand = operand;
+
+    public override IEnumerable<string> Variables => Operand.Variables;
+    public override bool IsConstant => Operand.IsConstant;
+    public override bool IsPolynomial => Operand.IsPolynomial;
+    public override int PolynomialDegree => Operand.PolynomialDegree;
+}
+
+public class UnaryPlus : UnaryOperation
+{
+    public UnaryPlus(Expr operand) : base(operand) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues) => Operand.Compute(variableValues);
+    public override string ToString() => $"+({Operand})";
+}
+
+public class UnaryMinus : UnaryOperation
+{
+    public UnaryMinus(Expr operand) : base(operand) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues) => -Operand.Compute(variableValues);
+    public override string ToString() => $"-({Operand})";
+}
+
+public abstract class BinaryOperation : Expr
+{
+    public Expr A { get; }
+    public Expr B { get; }
+
+    public BinaryOperation(Expr a, Expr b)
+    {
+        A = a;
+        B = b;
+    }
+
+    public override IEnumerable<string> Variables => A.Variables.Union(B.Variables);
+    public override bool IsConstant => A.IsConstant && B.IsConstant;
+    public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial;
+    public override int PolynomialDegree => Math.Max(A.PolynomialDegree, B.PolynomialDegree);
+}
+
+public class BinaryAddition : BinaryOperation
+{
+    public BinaryAddition(Expr a, Expr b) : base(a, b) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues) => A.Compute(variableValues) + B.Compute(variableValues);
+    public override string ToString() => $"({A} + {B})";
+}
+
+public class BinarySubtraction : BinaryOperation
+{
+    public BinarySubtraction(Expr a, Expr b) : base(a, b) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues) => A.Compute(variableValues) - B.Compute(variableValues);
+    public override string ToString() => $"({A} - {B})";
+}
+
+public class Multiplication : BinaryOperation
+{
+    public Multiplication(Expr a, Expr b) : base(a, b) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues) => A.Compute(variableValues) * B.Compute(variableValues);
+    public override string ToString() => $"({A} * {B})";
+}
+
+public class Division : BinaryOperation
+{
+    public Division(Expr a, Expr b) : base(a, b) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues)
+    {
+        double divisor = B.Compute(variableValues);
+        if (divisor == 0)
+            throw new DivideByZeroException("Деление на ноль недопустимо.");
+        return A.Compute(variableValues) / divisor;
+    }
+
+    public override string ToString() => $"({A} / {B})";
+}
+
+public abstract class Function : Expr
+{
+    public Expr Val { get; }
+
+    public Function(Expr val) => Val = val;
+
+    public override IEnumerable<string> Variables => Val.Variables;
+    public override bool IsConstant => Val.IsConstant;
+    public override int PolynomialDegree => Val.PolynomialDegree;
+    public override bool IsPolynomial => Val.IsPolynomial;
+}
+
+public class Sqrt : Function
+{
+    public Sqrt(Expr operand) : base(operand) { }
+
+    public override double Compute(IReadOnlyDictionary<string, double> variableValues)
+    {
+        double operandValue = Val.Compute(variableValues);
+        if (operandValue < 0)
+            throw new ArgumentException("Квадратный корень из отрицательного числа не допускается.");
+        return Math.Sqrt(operandValue);
+    }
+
+    public override string ToString() => $"Sqrt({Val})";
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
         // Тестирование
         var x = new Variable("x");
         var y = new Variable("y");
