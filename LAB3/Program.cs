@@ -145,7 +145,7 @@ public static class Simplifier
                 return new Multiplication(new Constant(2), addition.A);
             }
             // Случай суммирования нескольких одинаковых переменных
-            if (addition.A is Multiplication multA && multA.B is Constant aVal && addition.B.Equals(multA.A))
+            if (addition.A is Multiplication multA && multA.B is Constant aVal && addition.B.Equals(multA.A)) // Equals по хорошему надо переопеределять для каждого класса тк я думаю что тут он вообще не зайдет
             {
                 return new Multiplication(new Constant(aVal.Value + 1), multA.A);
             }
@@ -242,7 +242,7 @@ public class Variable : Expr
 
     public override string ToString() => Name;
 
-    public override bool Equals(object obj) => obj is Variable variable && Name == variable.Name;
+    public override bool Equals(object? obj) => obj is Variable variable && Name == variable.Name;//еще надо переопределить Hesh код 
 }
 
 public abstract class Function : Expr
@@ -302,7 +302,7 @@ public class Ctg : Function
     public override string ToString() => $"Ctg({Val})";
 }
 
-class Program
+class Program // юнит тесты надо в отдельный проект и сами тесты должны быть маленькими типо expr1 1 тест expr2 2 тест.
 {
     static void Main(string[] args)
     {
