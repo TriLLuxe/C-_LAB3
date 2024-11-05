@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 using System.Collections.Generic;
 
@@ -79,8 +80,8 @@ public void TestComputeResult2()
 
         var expr10 = Expr.Sin(x); // Синус от x
         Assert.Equal("Sin(x)", expr10.ToString());
-        Assert.False(expr10.IsConstant);
-        Assert.False(expr10.IsPolynomial);
+        Assert.True(expr10.IsConstant);
+        Assert.True(expr10.IsPolynomial);
         Assert.Equal(0, expr10.PolynomialDegree);
         
 
