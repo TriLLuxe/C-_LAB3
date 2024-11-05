@@ -140,4 +140,34 @@ public void TestComputeResult2()
 
         Assert.Equal(5, expr.Compute(values));
     }
+    [Fact]
+    public void TestDevision()
+    {
+        var x = new Variable("x");
+        var expr=x/x;
+        Assert.False(expr.IsPolynomial);
+    }
+    [Fact]
+    public void TestDevision2()
+    {
+        var x = new Variable("x");
+        var expr=x/x;
+        Assert.False(expr.IsConstant);
+    }
+    [Fact]
+
+    public void TestSqrt1()
+    {
+        var x = new Variable("x");
+        var expr=Expr.Sqrt(x);
+        Assert.False(expr.IsPolynomial);
+    }
+    [Fact]
+
+    public void TestSin1()
+    {
+        var x = new Variable("x");
+        var expr=Expr.Sin(x);
+        Assert.False(expr.IsPolynomial);
+    }
 }
