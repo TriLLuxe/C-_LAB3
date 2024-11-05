@@ -3902,26 +3902,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Glazu\\.nuget\\packages\\": {}
+    "/Users/agroboy/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\5_semestr\\С#\\C-_LAB3\\LAB3\\LAB3.csproj",
+      "projectUniqueName": "/Users/agroboy/STUDY/newgit/C-_LAB3/LAB3/LAB3.csproj",
       "projectName": "LAB3",
-      "projectPath": "C:\\5_semestr\\С#\\C-_LAB3\\LAB3\\LAB3.csproj",
-      "packagesPath": "C:\\Users\\Glazu\\.nuget\\packages\\",
-      "outputPath": "C:\\5_semestr\\С#\\C-_LAB3\\LAB3\\obj\\",
+      "projectPath": "/Users/agroboy/STUDY/newgit/C-_LAB3/LAB3/LAB3.csproj",
+      "packagesPath": "/Users/agroboy/.nuget/packages/",
+      "outputPath": "/Users/agroboy/STUDY/newgit/C-_LAB3/LAB3/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Glazu\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/agroboy/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3974,7 +3972,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
