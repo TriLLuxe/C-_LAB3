@@ -108,7 +108,7 @@ public class Multiplication : BinaryOperation
     public override string ToString() => $"({A} * {B})";
 }
 
-public class Division : BinaryOperation// в делении не переопределеана степень (PolynomialDegree), тк максимум из 2 но для деления это не так
+public class Division : BinaryOperation
 {
     public Division(Expr a, Expr b) : base(a, b) { }
 
