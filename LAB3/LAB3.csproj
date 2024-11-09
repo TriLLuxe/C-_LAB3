@@ -1,10 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <GenerateProgramFile>false</GenerateProgramFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0"/>
+    <PackageReference Include="xunit" Version="2.9.2"/>
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0-pre.42"/>
+  </ItemGroup>
 </Project>
