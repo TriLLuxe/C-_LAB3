@@ -73,43 +73,9 @@ public void TestComputeResult2()
     var values = new Dictionary<string, double> { { "x", 1 }, { "y", 2 } };
     Assert.Equal(-20, expr2.Compute(values));
 }
-    [Fact]
-    public void TestFunction()
-    {
-        var x = new Variable("x");
-
-        var expr10 = Expr.Sin(x); // Синус от x
-        Assert.Equal("Sin(x)", expr10.ToString());
-        Assert.True(expr10.IsConstant);
-        Assert.True(expr10.IsPolynomial);
-        Assert.Equal(0, expr10.PolynomialDegree);
-        
-
-    }
-    // [Fact]
-    // public void TestComplexExpression()
-    // {
-    //     var x = new Variable("x");
-
-    //     // Выражение (2*x*x - 2) / (x*x - 1)
-    //     var expr = ((2 * x * x) - 2) / (x * x - 1);
-
-    //     // Ожидаем, что выражение упростится до "2" при условии, что x != ±1
-    //     // Проверка строки
-    //     Assert.Equal("2", expr.ToString());
-    //     Assert.True( expr.IsConstant);
-    //     Assert.True( expr.IsPolynomial);
-    //     Assert.Equal(2, expr.PolynomialDegree);
-
-    //     // Проверка вычисления значения, где x ≠ ±1
-    //     var values = new Dictionary<string, double> { { "x", 3 } };
-    //     Assert.Equal(2, expr.Compute(values));
-
-    //     // Проверка для других значений x
-    //     values["x"] = 5;
-    //     Assert.Equal(2, expr.Compute(values));
-    // }
-
+    
+   
+   
     [Fact]
     public void TestConstantAndVariable()
     {

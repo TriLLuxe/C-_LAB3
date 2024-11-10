@@ -54,7 +54,18 @@ public class UnaryPlus : UnaryOperation
     public UnaryPlus(Expr operand) : base(operand) { }
 
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) => Operand.Compute(variableValues);
-    public override string ToString() => $"+({Operand})";
+    public override string ToString() 
+    {
+        string operandStr = Operand?.ToString() ?? string.Empty;
+        if (operandStr.StartsWith("-"))
+        {
+            return operandStr.Substring(1); 
+        }
+        else
+        {
+            return operandStr;
+        }
+    }
 }
 
 public class UnaryMinus : UnaryOperation
@@ -62,7 +73,18 @@ public class UnaryMinus : UnaryOperation
     public UnaryMinus(Expr operand) : base(operand) { }
 
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) => -Operand.Compute(variableValues);
-    public override string ToString() => $"-({Operand})";
+    public override string ToString() 
+    {
+        string operandStr = Operand?.ToString() ?? string.Empty;
+        if (operandStr.StartsWith("-"))
+        {
+            return operandStr.Substring(1);
+        }
+        else
+        {
+            return $"(-{operandStr})";
+        }
+    }
 }
 
 public abstract class BinaryOperation : Expr
@@ -79,8 +101,6 @@ public abstract class BinaryOperation : Expr
     public override IEnumerable<string> Variables => A.Variables.Union(B.Variables);
     
     public override bool IsConstant => A.IsConstant && B.IsConstant;
-    public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial;
-    public override int PolynomialDegree => Math.Max(A.PolynomialDegree, B.PolynomialDegree);
 }
 
 public class BinaryAddition : BinaryOperation
@@ -88,7 +108,28 @@ public class BinaryAddition : BinaryOperation
     public BinaryAddition(Expr left, Expr right) : base(left, right) { }
 
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) => A.Compute(variableValues) + B.Compute(variableValues);
-    public override string ToString() => $"({A} + {B})";
+    public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial;
+    public override int PolynomialDegree
+    {
+        get
+        {
+            if(!A.IsPolynomial||!B.IsPolynomial) return 0;
+            else return Math.Max(A.PolynomialDegree, B.PolynomialDegree);
+        }
+    }
+   //  public override string ToString() => $"({A} + {B})";
+   public override string ToString()
+{
+    // Если правый операнд это отрицательная константа
+    if (B is Constant constant && constant.Value < 0)
+    {
+        // Если выражение вида (x + (-1)), заменяем на (x - 1)
+        return $"({A} - {Math.Abs(constant.Value)})";
+    }
+
+    // В других случаях просто выводим обычное выражение
+    return $"({A} + {B})";
+}
 }
 
 public class BinarySubtraction : BinaryOperation 
@@ -96,16 +137,58 @@ public class BinarySubtraction : BinaryOperation
     public BinarySubtraction(Expr a, Expr b) : base(a, b) { }
 
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) => A.Compute(variableValues) - B.Compute(variableValues);
-    public override string ToString() => $"({A} - {B})";
+    public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial;
+    public override int PolynomialDegree => Math.Max(A.PolynomialDegree, B.PolynomialDegree);
+
+   //  public override string ToString() => $"({A} - {B})";
+  public override string ToString()
+{
+    // Если правый операнд это отрицательная константа
+    if (B is Constant constant && constant.Value < 0)
+    {
+        // Если выражение вида (x - (-1)), заменяем на (x + 1)
+        return $"({A} + {Math.Abs(constant.Value)})";
+    }
+
+    
+    if (A is Constant constantA && constantA.Value < 0)
+    {
+        
+        return $"{A} - {B}";
+    }
+
+    // В других случаях просто выводим обычное выражение
+    return $"({A} - {B})";
+}
 }
 
 public class Multiplication : BinaryOperation
 {
     public Multiplication(Expr a, Expr b) : base(a, b) { }
+    public override bool IsPolynomial => A.IsPolynomial||B.IsPolynomial;
 
     public override int PolynomialDegree => A.PolynomialDegree + B.PolynomialDegree;
     public override double Compute(IReadOnlyDictionary<string, double> variableValues) => A.Compute(variableValues) * B.Compute(variableValues);
-    public override string ToString() => $"({A} * {B})";
+    //  public override string ToString() => $"({A} * {B})";
+    public override string ToString()
+{
+    // Если правый операнд это отрицательная константа
+    if (B is Constant constant2 && constant2.Value < 0)
+    {
+        
+        return $"{A} * {B}";
+    }
+
+    // Если левый операнд это отрицательная константа
+    if (A is Constant constant1 && constant1.Value < 0)
+    {
+        
+        return $"{A} * {B}";
+    }
+
+    
+    return $"{A} * {B}";
+}
 }
 
 public class Division : BinaryOperation
@@ -120,6 +203,40 @@ public class Division : BinaryOperation
             throw new DivideByZeroException("Division by zero is not allowed.");
         return A.Compute(variableValues) / divisor;
     }
+    public override int PolynomialDegree 
+    {
+    get
+      {
+        if(!IsPolynomial) return 0;
+        else if (A.IsPolynomial && B.IsPolynomial)
+        {
+            int numeratorDegree = A.PolynomialDegree;
+            int denominatorDegree = B.PolynomialDegree;
+            if (numeratorDegree < denominatorDegree) 
+                return 0;
+            bool divides = divideCheck(A,B);
+            if (divides) return numeratorDegree-denominatorDegree;
+            else return 0;
+        }
+        else return 0;
+      }
+   }
+    private bool divideCheck(Expr numerator, Expr denominator)
+    {
+        int denominatorDegree = denominator.PolynomialDegree;
+        if (numerator is BinaryAddition || numerator is BinarySubtraction) 
+        {
+            var binaryNumerator = (BinaryOperation)numerator;
+            return divideCheck(binaryNumerator.A, denominator) && divideCheck(binaryNumerator.B, denominator);
+        }
+        
+        if (numerator.PolynomialDegree >= denominatorDegree)
+        {
+            return true;
+        }
+        return false; 
+    }
+
     public override string ToString() => $"({A} / {B})";
 }
 
@@ -153,12 +270,10 @@ public class Variable : Expr
     public override double Compute(IReadOnlyDictionary<string, double> variableValues)
     {
         if (variableValues.TryGetValue(Name, out double value)) return value;
-        else throw new ArgumentException($"\u041f\u0435\u0440\u0435\u043c\u0435\u043d\u043d\u0430\u044f {Name} \u043d\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0430.");
+        else throw new ArgumentException($"{Name} is not defined.");
     }
 
     public override string ToString() => Name;
-
-    public override bool Equals(object? obj) => obj is Variable variable && Name == variable.Name;
 }
 
 public abstract class Function : Expr
@@ -168,7 +283,14 @@ public abstract class Function : Expr
     public override IEnumerable<string> Variables => Val.Variables;
     public override bool IsConstant => true;
     public override int PolynomialDegree => 0;
-    public override bool IsPolynomial => true;
+     public override bool IsPolynomial
+    {
+        get
+        {
+            if(Val.IsConstant) return true;
+            else return false;
+        }
+    }
 }
 
 public class Sqrt : Function
@@ -182,6 +304,7 @@ public class Sqrt : Function
             throw new ArgumentException("Квадратный корень из отрицательного числа не допускается.");
         return Math.Sqrt(operandValue);
     }
+   
 
     public override string ToString() => $"Sqrt({Val})";
 }
@@ -226,31 +349,11 @@ class Program
         var x = new Variable("x");
         var y = new Variable("y");
         var c = new Constant(3);
-        var expr1 = x - x; // Должно упроститься до 0
-        var expr2 = (x * 1); // Должно упроститься до x
-        var expr4 = x + 0; // Должно упроститься до x
-        var expr5 = 0 + x; // Должно упроститься до x
-        var expr6 = x * 0; // Должно упроститься до 0
-        var expr7 = 0 * x; // Должно упроститься до 0
-        var expr8 = x / x; // Должно упроститься до 1
-        
-        var expr10 = Sin(x); // Синус от x
+       var expr1 = (x-x);
        
         Console.WriteLine($"""
-        {expr1.ToString()} // Ожидается: 0
-        {expr1.IsConstant} // Ожидается: true
-        {expr1.IsPolynomial}// Ожидается: true
-        {expr1.PolynomialDegree} // Ожидается: 0
-        {expr2.ToString()} // Ожидается: x
-        {expr4.ToString()} // Ожидается: x
-        {expr5.ToString()} // Ожидается: x
-        {expr6.ToString()} // Ожидается: 0
-        {expr7.ToString()} // Ожидается: 0
-        {expr8.ToString()} // Ожидается: 1
-        {expr10.ToString()} // Ожидается: Sin(x)
-        {expr10.IsConstant}// Ожидается: false
-        {expr10.IsPolynomial}// Ожидается: false
-        {expr10.PolynomialDegree} // Ожидается: 0
+       
+        
         
         """);
     }
