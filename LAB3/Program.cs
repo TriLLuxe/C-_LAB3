@@ -349,12 +349,14 @@ class Program
         var x = new Variable("x");
         var y = new Variable("y");
         var c = new Constant(3);
-       var expr1 = (x-x);
+        var expr1 = (x-(-x+1));
        
         Console.WriteLine($"""
-       
-        
-        
+        {expr1.ToString()} 
+        {expr1.IsConstant} 
+        {expr1.IsPolynomial}
+        {expr1.PolynomialDegree}
+        {expr1.Compute(new Dictionary<string, double> { { "x", 2 } })}
         """);
     }
 }
