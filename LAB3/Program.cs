@@ -140,26 +140,43 @@ public class BinarySubtraction : BinaryOperation
     public override bool IsPolynomial => A.IsPolynomial && B.IsPolynomial;
     public override int PolynomialDegree => Math.Max(A.PolynomialDegree, B.PolynomialDegree);
 
-   //  public override string ToString() => $"({A} - {B})";
+   
   public override string ToString()
 {
     // Если правый операнд это отрицательная константа
-    if (B is Constant constant && constant.Value < 0|| B is Variable var && var. < 0)
-    {
+    if (B is Constant constant && constant.Value < 0) {
         // Если выражение вида (x - (-1)), заменяем на (x + 1)
         return $"({A} + {Math.Abs(constant.Value)})";
     }
 
-    
-    if (A is Constant constantA && constantA.Value < 0)
-    {
+    // if (A is Constant constantA && constantA.Value < 0)
+    // {
         
-        return $"({A} - {B})";
+    //     return $"({A} - {B})";
+    // }
+    // Если правый операнд — унарный минус
+    if (B is UnaryMinus unaryMinus)
+    {
+        // Заменяем (A - (-B)) на (A + B)
+        return $"({A} + {unaryMinus.Operand})";
     }
+
+    // Если правый операнд — переменная, обернутая в унарный минус
+    if (B is Variable || B is UnaryOperation)
+    {
+        string bString = B.ToString();
+        if (bString.StartsWith("-"))
+        {
+            // Убираем лишний минус и превращаем в сложение
+            return $"({A} + {bString.TrimStart('-')})";
+        }
+    }
+    
 
     // В других случаях просто выводим обычное выражение
     return $"({A} - {B})";
 }
+
 }
 
 public class Multiplication : BinaryOperation
@@ -353,7 +370,7 @@ class Program
         var c = new Constant(3);
         var expr1 = 10*x+4*x*x;
         var expr2 = 3*x;
-        var expr3 = x + x - (-y);
+        var expr3 = x + x + (-y);
        
         Console.WriteLine($"""
         {expr3.ToString()} 
