@@ -40,54 +40,6 @@ public abstract class Expr : IExpr
     public static Expr operator /(Expr a, Expr b) => new Division(a, b);
 }
 
-public class Derivative : Expr
-{
-    private Expr expression;  
-    private Variable variable;  
-
- 
-    public Derivative(Expr expr, Variable var)
-    {
-        expression = expr;
-        variable = var;
-    }
-
-   
-    public override IEnumerable<string> Variables => expression.Variables;
-
-   
-    public override bool IsConstant => expression.IsConstant && !expression.Variables.Contains(variable.Name);
-
-   
-    public override bool IsPolynomial => expression.IsPolynomial && expression.Variables.Contains(variable.Name);
-
-  
-    public override int PolynomialDegree => Math.Max(0, expression.PolynomialDegree - 1);
-
-    
-    public override double Compute(IReadOnlyDictionary<string, double> variableValues)
-    {
-        if (!variableValues.ContainsKey(variable.Name))
-            throw new ArgumentException($"Variable {variable.Name} is not defined.");
-
-        
-        return expression.Diff(variable).Compute(variableValues);
-    }
-
-   
-    public override Expr Diff(Variable var)
-    {
-        return new Derivative(expression, var);
-    }
-
-    
-    public override string ToString()
-    {
-        return $"d/d{variable.Name}({expression})";
-    }
-}
-
-
 public abstract class UnaryOperation : Expr
 {
     public Expr Operand { get; }
@@ -188,17 +140,17 @@ public class BinaryAddition : BinaryOperation
         // Если правый операнд — унарный минус, упрощаем выражение
         if (B is UnaryMinus unaryMinus)
         {
-            return $"{A} - {unaryMinus.Operand}";
+            return $"({A} - {unaryMinus.Operand})";
         }
 
         // Если правый операнд это отрицательная константа
         if (B is Constant constant && constant.Value < 0)
         {
-            return $"{A} - {Math.Abs(constant.Value)}";
+            return $"({A} - {Math.Abs(constant.Value)})";
         }
 
         // В других случаях просто выводим обычное выражение
-        return $"{A} + {B}";
+        return $"({A} + {B})";
     }
 }
 
@@ -226,16 +178,16 @@ public class BinarySubtraction : BinaryOperation
         // Упрощаем выражение, убирая лишние скобки и обрабатывая случаи с унарным минусом
         if (B is UnaryMinus unaryMinus)
         {
-            return $"{A} + {unaryMinus.Operand}";
+            return $"({A} + {unaryMinus.Operand})";
         }
 
         // Если правый операнд — это сложное выражение, проверяем возможность упрощения
         if (B is BinaryAddition || B is BinarySubtraction)
         {
-            return $"{A} - ({B})";
+            return $"({A} - ({B}))";
         }
 
-        return $"{A} - {B}";
+        return $"({A} - {B})";
     }
 }
 
@@ -471,7 +423,7 @@ class Program
         var c = new Constant(3);
         var expr1 = 10*x+4*x*x;
         var expr2 = 3*x;
-        var expr3 = Cos(y).Diff(x);
+        var expr3 = Cos(x).Diff(x);
         
         Console.WriteLine($"""
         {expr3.ToString()} 
